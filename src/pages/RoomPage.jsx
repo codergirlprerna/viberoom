@@ -33,10 +33,12 @@ const REACTION_EMOJIS = ["🔥","😍","💯","🎵","⚡","🥲","👏","💚"]
 export default function RoomPage() {
   const { roomId } = useParams();
   const navigate   = useNavigate();
-  const { user }   = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   const { room, loading: roomLoading } = useRoom(roomId);
-  const isHost = room?.hostId === user?.uid || (!user?.isGuest && !!user?.uid);
+  // Wait for auth to load before checking host
+  const isLoggedIn = !authLoading && !!user && !user.isGuest;
+  const isHost = isLoggedIn && (room?.hostId === user?.uid || true);
 
   const { stompClient, connected } = useWebSocket(roomId);
 

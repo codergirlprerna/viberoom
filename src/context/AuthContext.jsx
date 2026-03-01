@@ -13,14 +13,14 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        // Real Firebase user — sync to backend
         try { await authAPI.syncUser(); } catch { /* silent */ }
         setUser(firebaseUser);
+        // Clear any guest session when real user logs in
+        sessionStorage.removeItem("guestName");
+        sessionStorage.removeItem("guestRoomId");
       } else {
-        // Check if guest
         const guestName = sessionStorage.getItem("guestName");
         if (guestName) {
-          // Create a fake user object for guests
           setUser({
             uid: `guest_${Date.now()}`,
             displayName: guestName,

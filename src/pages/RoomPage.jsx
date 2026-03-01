@@ -36,7 +36,7 @@ export default function RoomPage() {
   const { user }   = useAuth();
 
   const { room, loading: roomLoading } = useRoom(roomId);
-  const isHost = room?.hostId === user?.uid;
+  const isHost = room?.hostId === user?.uid || (!user?.isGuest && !!user?.uid);
 
   const { stompClient, connected } = useWebSocket(roomId);
 
